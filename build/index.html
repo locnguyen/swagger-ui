@@ -95,6 +95,14 @@
             <img alt='Throbber' id='${apiName}_${nickname}_${httpMethod}_content_sandbox_response_throbber' src='http://swagger.wordnik.com/images/throbber.gif' style='display:none' />
           </div>
         </form>
+        <div class='sampleBody' id='${apiName}_${nickname}_${httpMethod}_sample_body' style='display:none'>
+          <h4>Sample Request Body</h4>
+          <div class='block sample_body'>
+            <textarea id='${apiName}_${nickname}_${httpMethod}_textarea' style='width: 340px'/>
+            <br/>
+            <input class='submit' id='${apiName}_${nickname}_${httpMethod}_sample_body_button' name='commit' type='button' value='Try it out!' />
+          </div>
+        </div>
         <div class='response' id='${apiName}_${nickname}_${httpMethod}_content_sandbox_response' style='display:none'>
           <h4>Request URL</h4>
           <div class='block request_url'></div>
@@ -155,17 +163,6 @@
     </tr>
     </script>
 
-    <script id="sampleBodyTemplate" type="text/x-jquery-tmpl">
-    <div class='sampleBody' id='${apiName}_${nickname}_${httpMethod}_sample_body' style=''>
-      <h4>Sample Request Body</h4>
-      <div class='block sample_body'>
-        <textarea id='${apiName}_${nickname}_${httpMethod}_textarea' style='width: 340px'/>
-        <br/>
-        <input class='submit' id='${apiName}_${nickname}_${httpMethod}_button' name='commit' type='button' value='Try it out!' />
-        <div id='${apiName}_${nickname}_${httpMethod}_response_body'></div>
-      </div>
-    </div>
-    </script>
     <div id='content_message'>
       Enter the base URL of the API that you wish to explore, or try
       <a onclick="$('#input_baseUrl').val('http://swagr.api.wordnik.com/v4'); apiSelectionController.showApi(); return false;" href="#">swagr.api.wordnik.com/v4</a>

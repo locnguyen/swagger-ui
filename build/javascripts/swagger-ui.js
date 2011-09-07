@@ -251,7 +251,7 @@ jQuery(function($) {
   
   
   var OperationController = Spine.Controller.create({
-    proxied: ["submitOperation", "showResponse", "showErrorStatus", "showCompleteStatus"],
+    proxied: ["submitPostOperation", "submitOperation", "showResponse", "showErrorStatus", "showCompleteStatus"],
 
     operation: null,
     templateName: "#operationTemplate",
@@ -265,41 +265,24 @@ jQuery(function($) {
       this.elementScope = "#" + this.operation.apiName + "_" + this.operation.nickname + "_" + this.operation.httpMethod;
 
       this.renderParams();
-      this.renderSampleBody();
+      // this.bindSampleBodyBehavior();
     },
 
     render: function() {
       $(this.templateName).tmpl(this.item).appendTo(this.container);
     },
 
-    renderSampleBody: function() {
-      if (this.operation.sampleBody) {
-        var elScope = this.elementScope;
-        var op = this.operation;
+    bindSampleBodyBehavior: function() {
+      var op = this.operation;
+      if (op.sampleBody) {
+        var that = this,
+            elScope = this.elementScope;
 
         var jsonStr = JSON.stringify(op.sampleBody, null);
         var operationsContainer = elScope + "_content";
-        $("#sampleBodyTemplate").tmpl(op).appendTo(operationsContainer);
         $(elScope + "_textarea").val(jsonStr);
-        $(elScope + "_button").click(function() { 
-          var url = op.baseUrl + op.path;
-          $.ajax({
-            url: url,
-            type: op.httpMethod,
-            contentType: "application/json",
-            data: $(elScope + "_textarea").val(),
-            success: function(response) {
-              loadResponse(response);
-            }
-          });
-        });
-        $(elScope + "_sample_body").slideDown();
-
-        function loadResponse(response) {
-          var prettyJson = JSON.stringify(response, null, "\t").replace(/\n/g, "<br>");
-
-          $(elScope + "_response_body").html('<pre>' + prettyJson + '</pre>');
-        }
+        // $(elScope + "_button").click(this.submitPostOperation);
+        $(elScope + "_sample_body").show();
       }
     },
 
@@ -310,16 +293,22 @@ jQuery(function($) {
         for (var p = 0; p < this.operation.parameters.count(); p++) {
           var param = Param.init(this.operation.parameters.all()[p]);
           // Only GET operations display forms..
-          param.readOnly = !this.isGetOperation;
+          param.readOnly = false; // !this.isGetOperation;
           param.cleanup();
 
           $(param.templateName()).tmpl(param).appendTo(operationParamsContainer);
         }
       }
-
+      
+      if (this.operation.sampleBody) {
+        this.bindSampleBodyBehavior();
+        var postButtonId = this.elementScope + "_sample_body_button";
+        $(postButtonId).click(this.submitOperation);
+      }
       var submitButtonId = this.elementScope + "_content_sandbox_response_button";
       if (this.isGetOperation) {
         $(submitButtonId).click(this.submitOperation);
+        
       } else {
         $(submitButtonId).hide();
 
@@ -354,7 +343,25 @@ jQuery(function($) {
       if (error_free) {
         var invocationUrl = this.operation.invocationUrl(form.serializeArray());
         $(".request_url", this.elementScope + "_content_sandbox_response").html("<pre>" + invocationUrl + "</pre>");
-        $.getJSON(invocationUrl, this.showResponse).complete(this.showCompleteStatus).error(this.showErrorStatus);
+        
+        if (this.operation.httpMethod === 'GET') {
+          $.getJSON(invocationUrl, this.showResponse).complete(this.showCompleteStatus).error(this.showErrorStatus);
+        }
+        else {
+          var url = this.operation.invocationUrl([]);
+          var that = this;
+
+          $.ajax({
+            url: url,
+            type: this.operation.httpMethod,
+            contentType: "application/json",
+            data: $(this.elementScope + "_textarea").val(),
+            success: function(response, textStatus, obj) {
+              that.showCompleteStatus(obj);
+              $(that.elementScope + "_content_sandbox_response").show();
+            }
+          });
+        }
       }
 
     },
@@ -386,15 +393,8 @@ jQuery(function($) {
       $(".response_code", this.elementScope + "_content_sandbox_response").html("<pre>" + data.status + "</pre>");
       $(".response_body", this.elementScope + "_content_sandbox_response").html(response_body);
       $(".response_headers", this.elementScope + "_content_sandbox_response").html("<pre>" + data.getAllResponseHeaders() + "</pre>");
-    },
-
-    callEndpointOnTextarea: function() {
-      var textarea = $(this.elementScope + "_textarea");
-      var method = this.operation.httpMethod;
-      var url = this.operation.invocationUrl;
-
-      alert(textarea.val());
     }
+
   });
 
   // Attach controller to window
