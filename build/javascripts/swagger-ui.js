@@ -288,12 +288,18 @@ jQuery(function($) {
             type: op.httpMethod,
             contentType: "application/json",
             data: $(elScope + "_textarea").val(),
-            success: function() {
-              
+            success: function(response) {
+              loadResponse(response);
             }
           });
         });
         $(elScope + "_sample_body").slideDown();
+
+        function loadResponse(response) {
+          var prettyJson = JSON.stringify(response, null, "\t").replace(/\n/g, "<br>");
+
+          $(elScope + "_response_body").html('<pre>' + prettyJson + '</pre>');
+        }
       }
     },
 
