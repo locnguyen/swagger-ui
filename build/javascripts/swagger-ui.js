@@ -274,11 +274,26 @@ jQuery(function($) {
 
     renderSampleBody: function() {
       if (this.operation.sampleBody) {
-        var prettyJson = JSON.stringify(this.operation.sampleBody, null, "\t").replace(/\n/g, "<br>");
-        var operationsContainer = this.elementScope + "_content";
-        $("#sampleBodyTemplate").tmpl(this.operation).appendTo(operationsContainer);
-        $(this.elementScope + "_sample_body").find('pre').html(prettyJson);
-        $(this.elementScope + "_sample_body").slideDown();
+        var elScope = this.elementScope;
+        var op = this.operation;
+
+        var jsonStr = JSON.stringify(op.sampleBody, null);
+        var operationsContainer = elScope + "_content";
+        $("#sampleBodyTemplate").tmpl(op).appendTo(operationsContainer);
+        $(elScope + "_textarea").val(jsonStr);
+        $(elScope + "_button").click(function() { 
+          var url = op.baseUrl + op.path;
+          $.ajax({
+            url: url,
+            type: op.httpMethod,
+            contentType: "application/json",
+            data: $(elScope + "_textarea").val(),
+            success: function() {
+              
+            }
+          });
+        });
+        $(elScope + "_sample_body").slideDown();
       }
     },
 
@@ -291,7 +306,7 @@ jQuery(function($) {
           // Only GET operations display forms..
           param.readOnly = !this.isGetOperation;
           param.cleanup();
-          
+
           $(param.templateName()).tmpl(param).appendTo(operationParamsContainer);
         }
       }
@@ -365,8 +380,15 @@ jQuery(function($) {
       $(".response_code", this.elementScope + "_content_sandbox_response").html("<pre>" + data.status + "</pre>");
       $(".response_body", this.elementScope + "_content_sandbox_response").html(response_body);
       $(".response_headers", this.elementScope + "_content_sandbox_response").html("<pre>" + data.getAllResponseHeaders() + "</pre>");
-    }
+    },
 
+    callEndpointOnTextarea: function() {
+      var textarea = $(this.elementScope + "_textarea");
+      var method = this.operation.httpMethod;
+      var url = this.operation.invocationUrl;
+
+      alert(textarea.val());
+    }
   });
 
   // Attach controller to window
