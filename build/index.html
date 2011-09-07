@@ -154,6 +154,13 @@
       <td width='500'>${description}</td>
     </tr>
     </script>
+
+    <script id="sampleBodyTemplate" type="text/x-jquery-tmpl">
+    <div class='sampleBody' id='${apiName}_${nickname}_${httpMethod}_sample_body' style=''>
+      <h4>Sample Request Body</h4>
+      <div class='block sample_body'><pre></pre></div>
+    </div>
+    </script>
     <div id='content_message'>
       Enter the base URL of the API that you wish to explore, or try
       <a onclick="$('#input_baseUrl').val('http://swagr.api.wordnik.com/v4'); apiSelectionController.showApi(); return false;" href="#">swagr.api.wordnik.com/v4</a>

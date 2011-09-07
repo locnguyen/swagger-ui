@@ -265,10 +265,21 @@ jQuery(function($) {
       this.elementScope = "#" + this.operation.apiName + "_" + this.operation.nickname + "_" + this.operation.httpMethod;
 
       this.renderParams();
+      this.renderSampleBody();
     },
 
     render: function() {
       $(this.templateName).tmpl(this.item).appendTo(this.container);
+    },
+
+    renderSampleBody: function() {
+      if (this.operation.sampleBody) {
+        var prettyJson = JSON.stringify(this.operation.sampleBody, null, "\t").replace(/\n/g, "<br>");
+        var operationsContainer = this.elementScope + "_content";
+        $("#sampleBodyTemplate").tmpl(this.operation).appendTo(operationsContainer);
+        $(this.elementScope + "_sample_body").find('pre').html(prettyJson);
+        $(this.elementScope + "_sample_body").slideDown();
+      }
     },
 
     renderParams: function() {
