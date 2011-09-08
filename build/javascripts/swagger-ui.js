@@ -348,7 +348,15 @@ jQuery(function($) {
           $.getJSON(invocationUrl, this.showResponse).complete(this.showCompleteStatus).error(this.showErrorStatus);
         }
         else {
-          var url = this.operation.invocationUrl([]);
+          var formData;
+          if (form) {
+           formData = form.serializeArray();
+          }
+          else {
+            // No form when creating a new resource
+            formData = [];
+          }
+          var url = this.operation.invocationUrl(formData);
           var that = this;
 
           $.ajax({
