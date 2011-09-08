@@ -265,7 +265,6 @@ jQuery(function($) {
       this.elementScope = "#" + this.operation.apiName + "_" + this.operation.nickname + "_" + this.operation.httpMethod;
 
       this.renderParams();
-      // this.bindSampleBodyBehavior();
     },
 
     render: function() {
@@ -305,13 +304,16 @@ jQuery(function($) {
         var postButtonId = this.elementScope + "_sample_body_button";
         $(postButtonId).click(this.submitOperation);
       }
+      
       var submitButtonId = this.elementScope + "_content_sandbox_response_button";
+      
       if (this.isGetOperation) {
         $(submitButtonId).click(this.submitOperation);
-        
-      } else {
-        $(submitButtonId).hide();
 
+      }
+      else {
+        // $(submitButtonId).hide();
+        $(submitButtonId).click(this.submitOperation);
         var valueHeader = this.elementScope + "_value_header";
         $(valueHeader).html("Default Value");
       }
@@ -395,11 +397,13 @@ jQuery(function($) {
     },
 
     showStatus: function(data) {
-      // log(data);
-      // log(data.getAllResponseHeaders());
-      var response_body = "<pre>" + JSON.stringify(JSON.parse(data.responseText), null, 2).replace(/\n/g, "<br>") + "</pre>";
+      
+      if (data.status != '204') {
+        var response_body = "<pre>" + JSON.stringify(JSON.parse(data.responseText), null, 2).replace(/\n/g, "<br>") + "</pre>";
+        $(".response_body", this.elementScope + "_content_sandbox_response").html(response_body);
+      }
+      
       $(".response_code", this.elementScope + "_content_sandbox_response").html("<pre>" + data.status + "</pre>");
-      $(".response_body", this.elementScope + "_content_sandbox_response").html(response_body);
       $(".response_headers", this.elementScope + "_content_sandbox_response").html("<pre>" + data.getAllResponseHeaders() + "</pre>");
     }
 
@@ -407,7 +411,7 @@ jQuery(function($) {
 
   // Attach controller to window
   window.apiSelectionController = ApiSelectionController.init();
-  
+
   if (this.baseUrl) {
     window.resourceListController = ResourceListController.init({
       baseUrl: this.baseUrl,
