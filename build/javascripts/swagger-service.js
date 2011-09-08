@@ -14,7 +14,7 @@ function SwaggerService(baseUrl, _apiKey, statusCallback) {
   // log("using base url " + baseUrl);
   var apiHost = baseUrl.substr(0, baseUrl.lastIndexOf("/"));
   var rootResourcesApiName = baseUrl.substr(baseUrl.lastIndexOf("/") + 1, (baseUrl.lastIndexOf(".") - baseUrl.lastIndexOf("/") - 1));
-  var formatString = ".{format}";
+  var formatString = ""; // ".{format}";
   var statusListener = statusCallback;
   var apiKey = _apiKey;
 
@@ -65,7 +65,7 @@ function SwaggerService(baseUrl, _apiKey, statusCallback) {
       this.path_xml = this.path.replace("{format}", "xml");
       this.baseUrl = apiHost;
       //execluded 9 letters to remove .{format} from name
-      this.name = this.path.substr(1, this.path.length - formatString.length - 1);
+      this.name = this.path.replace("/", ""); // this.path.substr(1, this.path.length - formatString.length - 1);
       this.apiList = Api.sub();
       this.modelList = ApiModel.sub();
     },
@@ -100,18 +100,18 @@ function SwaggerService(baseUrl, _apiKey, statusCallback) {
         this.path_xml = prefix.replace("{format}", "xml") + suffix;;
 
         if (this.path.indexOf("/") == 0) {
-          this.name = this.path.substr(1, secondPathSeperatorIndex - formatString.length - 1);
+          this.name = this.path.substr(1, secondPathSeperatorIndex - 1); // this.path.substr(1, secondPathSeperatorIndex - formatString.length - 1);
         } else {
-          this.name = this.path.substr(0, secondPathSeperatorIndex - formatString.length - 1);
+          this.name = this.path.substr(0, secondPathSeperatorIndex - 1);
         }
       } else {
         this.path_json = this.path.replace("{format}", "json");
         this.path_xml = this.path.replace("{format}", "xml");
 
         if (this.path.indexOf("/") == 0) {
-          this.name = this.path.substr(1, this.path.length - formatString.length - 1);
+          this.name = this.path.substr(1, this.path.length - 1);
         } else {
-          this.name = this.path.substr(0, this.path.length - formatString.length - 1);
+          this.name = this.path.substr(0, this.path.length - 1);
         }
       }
 
@@ -182,7 +182,7 @@ function SwaggerService(baseUrl, _apiKey, statusCallback) {
     invocationUrl: function(formValues) {
       var formValuesMap = new Object();
       for (var i = 0; i < formValues.length; i++) {
-        var formValue = formValues[i];
+        var fmrmValue = formValues[i];
         if (formValue.value && jQuery.trim(formValue.value).length > 0)
         formValuesMap[formValue.name] = formValue.value;
       }
