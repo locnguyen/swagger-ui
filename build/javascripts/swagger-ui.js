@@ -298,26 +298,29 @@ jQuery(function($) {
           $(param.templateName()).tmpl(param).appendTo(operationParamsContainer);
         }
       }
-      
+
       if (this.operation.sampleBody) {
         this.bindSampleBodyBehavior();
         var postButtonId = this.elementScope + "_sample_body_button";
         $(postButtonId).click(this.submitOperation);
       }
-      
+
       var submitButtonId = this.elementScope + "_content_sandbox_response_button";
-      
+
       if (this.isGetOperation) {
         $(submitButtonId).click(this.submitOperation);
 
       }
       else {
-        // $(submitButtonId).hide();
+        if (this.operation.httpMethodLowercase == 'put' ||
+            this.operation.httpMethodLowercase == 'post') {
+          $(submitButtonId).hide();
+        }
+
         $(submitButtonId).click(this.submitOperation);
         var valueHeader = this.elementScope + "_value_header";
         $(valueHeader).html("Default Value");
       }
-
     },
 
     submitOperation: function() {
