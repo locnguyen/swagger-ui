@@ -182,7 +182,7 @@ function SwaggerService(baseUrl, _apiKey, statusCallback) {
     invocationUrl: function(formValues) {
       var formValuesMap = new Object();
       for (var i = 0; i < formValues.length; i++) {
-        var fmrmValue = formValues[i];
+        var formValue = formValues[i];
         if (formValue.value && jQuery.trim(formValue.value).length > 0)
         formValuesMap[formValue.name] = formValue.value;
       }
